@@ -37,105 +37,111 @@ fi
 
 # Declare Go tools and their installation commands
 declare -A gotools=(
+	# Subdomain Enumeration
+	["subfinder"]="go install -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest"
+	["dnsx"]="go install -v github.com/projectdiscovery/dnsx/cmd/dnsx@latest"
+	["tlsx"]="go install -v github.com/projectdiscovery/tlsx/cmd/tlsx@latest"
+	["amass"]="go install -v github.com/owasp-amass/amass/v4/...@master"
+
+	# Port Scanning
+	["naabu"]="go install -v github.com/projectdiscovery/naabu/v2/cmd/naabu@latest"
+	["smap"]="go install -v github.com/s0md3v/smap/cmd/smap@latest"
+	["nmapurls"]="go install -v github.com/sdcampbell/nmapurls@latest"
+	
 	["gf"]="go install -v github.com/tomnomnom/gf@latest"
-	["brutespray"]="go install -v github.com/x90skysn3k/brutespray@latest"
+	# ["brutespray"]="go install -v github.com/x90skysn3k/brutespray@latest"
 	["qsreplace"]="go install -v github.com/tomnomnom/qsreplace@latest"
 	["ffuf"]="go install -v github.com/ffuf/ffuf/v2@latest"
-	["github-subdomains"]="go install -v github.com/gwen001/github-subdomains@latest"
-	["gitlab-subdomains"]="go install -v github.com/gwen001/gitlab-subdomains@latest"
+	# ["github-subdomains"]="go install -v github.com/gwen001/github-subdomains@latest"
+	# ["gitlab-subdomains"]="go install -v github.com/gwen001/gitlab-subdomains@latest"
 	["nuclei"]="go install -v github.com/projectdiscovery/nuclei/v3/cmd/nuclei@latest"
 	["anew"]="go install -v github.com/tomnomnom/anew@latest"
-	["notify"]="go install -v github.com/projectdiscovery/notify/cmd/notify@latest"
+	# ["notify"]="go install -v github.com/projectdiscovery/notify/cmd/notify@latest"
 	["unfurl"]="go install -v github.com/tomnomnom/unfurl@v0.3.0"
 	["httpx"]="go install -v github.com/projectdiscovery/httpx/cmd/httpx@latest"
-	["github-endpoints"]="go install -v github.com/gwen001/github-endpoints@latest"
-	["dnsx"]="go install -v github.com/projectdiscovery/dnsx/cmd/dnsx@latest"
-	["subjs"]="go install -v github.com/lc/subjs@latest"
-	["Gxss"]="go install -v github.com/KathanP19/Gxss@latest"
+	# ["github-endpoints"]="go install -v github.com/gwen001/github-endpoints@latest"
+	# ["subjs"]="go install -v github.com/lc/subjs@latest"
+	# ["Gxss"]="go install -v github.com/KathanP19/Gxss@latest"
 	["katana"]="go install -v github.com/projectdiscovery/katana/cmd/katana@latest"
 	["crlfuzz"]="go install -v github.com/dwisiswant0/crlfuzz/cmd/crlfuzz@latest"
 	["dalfox"]="go install -v github.com/hahwul/dalfox/v2@latest"
-	["puredns"]="go install -v github.com/d3mondev/puredns/v2@latest"
-	["interactsh-client"]="go install -v github.com/projectdiscovery/interactsh/cmd/interactsh-client@latest"
-	["analyticsrelationships"]="go install -v github.com/Josue87/analyticsrelationships@latest"
-	["gotator"]="go install -v github.com/Josue87/gotator@latest"
-	["roboxtractor"]="go install -v github.com/Josue87/roboxtractor@latest"
-	["mapcidr"]="go install -v github.com/projectdiscovery/mapcidr/cmd/mapcidr@latest"
-	["cdncheck"]="go install -v github.com/projectdiscovery/cdncheck/cmd/cdncheck@latest"
-	["dnstake"]="go install -v github.com/pwnesia/dnstake/cmd/dnstake@latest"
-	["tlsx"]="go install -v github.com/projectdiscovery/tlsx/cmd/tlsx@latest"
-	["gitdorks_go"]="go install -v github.com/damit5/gitdorks_go@latest"
-	["smap"]="go install -v github.com/s0md3v/smap/cmd/smap@latest"
-	["dsieve"]="go install -v github.com/trickest/dsieve@master"
-	["inscope"]="go install -v github.com/tomnomnom/hacks/inscope@latest"
-	["enumerepo"]="go install -v github.com/trickest/enumerepo@latest"
-	["Web-Cache-Vulnerability-Scanner"]="go install -v github.com/Hackmanit/Web-Cache-Vulnerability-Scanner@latest"
-	["subfinder"]="go install -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest"
-	["hakip2host"]="go install -v github.com/hakluke/hakip2host@latest"
+	# ["puredns"]="go install -v github.com/d3mondev/puredns/v2@latest"
+	# ["interactsh-client"]="go install -v github.com/projectdiscovery/interactsh/cmd/interactsh-client@latest"
+	# ["analyticsrelationships"]="go install -v github.com/Josue87/analyticsrelationships@latest"
+	# ["gotator"]="go install -v github.com/Josue87/gotator@latest"
+	# ["roboxtractor"]="go install -v github.com/Josue87/roboxtractor@latest"
+	# ["mapcidr"]="go install -v github.com/projectdiscovery/mapcidr/cmd/mapcidr@latest"
+	# ["cdncheck"]="go install -v github.com/projectdiscovery/cdncheck/cmd/cdncheck@latest"
+	# ["dnstake"]="go install -v github.com/pwnesia/dnstake/cmd/dnstake@latest"
+	# ["gitdorks_go"]="go install -v github.com/damit5/gitdorks_go@latest"
+	# ["dsieve"]="go install -v github.com/trickest/dsieve@master"
+	# ["inscope"]="go install -v github.com/tomnomnom/hacks/inscope@latest"
+	# ["enumerepo"]="go install -v github.com/trickest/enumerepo@latest"
+	# ["Web-Cache-Vulnerability-Scanner"]="go install -v github.com/Hackmanit/Web-Cache-Vulnerability-Scanner@latest"
+	# ["hakip2host"]="go install -v github.com/hakluke/hakip2host@latest"
 	["mantra"]="go install -v github.com/Brosck/mantra@latest"
 	["crt"]="go install -v github.com/cemulus/crt@latest"
-	["s3scanner"]="go install -v github.com/sa7mon/s3scanner@latest"
-	["nmapurls"]="go install -v github.com/sdcampbell/nmapurls@latest"
-	["shortscan"]="go install -v github.com/bitquark/shortscan/cmd/shortscan@latest"
-	["sns"]="go install github.com/sw33tLie/sns@latest"
-	["ppmap"]="go install -v github.com/kleiton0x00/ppmap@latest"
-	["sourcemapper"]="go install -v github.com/denandz/sourcemapper@latest"
-	["jsluice"]="go install -v github.com/BishopFox/jsluice/cmd/jsluice@latest"
+	# ["s3scanner"]="go install -v github.com/sa7mon/s3scanner@latest"
+	# ["shortscan"]="go install -v github.com/bitquark/shortscan/cmd/shortscan@latest"
+	# ["sns"]="go install github.com/sw33tLie/sns@latest"
+	# ["ppmap"]="go install -v github.com/kleiton0x00/ppmap@latest"
+	# ["sourcemapper"]="go install -v github.com/denandz/sourcemapper@latest"
+	# ["jsluice"]="go install -v github.com/BishopFox/jsluice/cmd/jsluice@latest"
 	["urlfinder"]="go install -v github.com/projectdiscovery/urlfinder/cmd/urlfinder@latest"
-	["cent"]="go install -v github.com/xm1k3/cent@latest"
-	["csprecon"]="go install github.com/edoardottt/csprecon/cmd/csprecon@latest"
-	["VhostFinder"]="go install -v github.com/wdahlenburg/VhostFinder@latest"
-	["misconfig-mapper"]="go install github.com/intigriti/misconfig-mapper/cmd/misconfig-mapper@latest"
+	# ["cent"]="go install -v github.com/xm1k3/cent@latest"
+	# ["csprecon"]="go install github.com/edoardottt/csprecon/cmd/csprecon@latest"
+	# ["VhostFinder"]="go install -v github.com/wdahlenburg/VhostFinder@latest"
+	# ["misconfig-mapper"]="go install github.com/intigriti/misconfig-mapper/cmd/misconfig-mapper@latest"
 )
 
 # Declare pipx tools and their paths
 declare -A pipxtools=(
-	["dnsvalidator"]="vortexau/dnsvalidator"
-	["interlace"]="codingo/Interlace"
+	# ["dnsvalidator"]="vortexau/dnsvalidator"
+	# ["interlace"]="codingo/Interlace"
 	["wafw00f"]="EnableSecurity/wafw00f"
-	["commix"]="commixproject/commix"
-	["urless"]="xnl-h4ck3r/urless"
+	# ["commix"]="commixproject/commix"
+	# ["urless"]="xnl-h4ck3r/urless"
 	["ghauri"]="r0oth3x49/ghauri"
-	["xnLinkFinder"]="xnl-h4ck3r/xnLinkFinder"
-	["xnldorker"]="xnl-h4ck3r/xnldorker"
-	["porch-pirate"]="MandConsultingGroup/porch-pirate"
-	["p1radup"]="iambouali/p1radup"
-	["subwiz"]="hadriansecurity/subwiz"
+	# ["xnLinkFinder"]="xnl-h4ck3r/xnLinkFinder"
+	# ["xnldorker"]="xnl-h4ck3r/xnldorker"
+	# ["porch-pirate"]="MandConsultingGroup/porch-pirate"
+	# ["p1radup"]="iambouali/p1radup"
+	# ["subwiz"]="hadriansecurity/subwiz"
 )
 
 # Declare repositories and their paths
 declare -A repos=(
-	["dorks_hunter"]="six2dez/dorks_hunter"
-	["gf"]="tomnomnom/gf"
-	["Gf-Patterns"]="1ndianl33t/Gf-Patterns"
-	["sus_params"]="g0ldencybersec/sus_params"
+	# ["dorks_hunter"]="six2dez/dorks_hunter"
+	# ["gf"]="tomnomnom/gf"
+	# ["Gf-Patterns"]="1ndianl33t/Gf-Patterns"
+	# ["sus_params"]="g0ldencybersec/sus_params"
 	["Corsy"]="s0md3v/Corsy"
-	["CMSeeK"]="Tuhinshubhra/CMSeeK"
-	["fav-up"]="pielco11/fav-up"
-	["massdns"]="blechschmidt/massdns"
-	["Oralyzer"]="r0075h3ll/Oralyzer"
-	["testssl.sh"]="drwetter/testssl.sh"
-	["JSA"]="w9w/JSA"
-	["CloudHunter"]="belane/CloudHunter"
-	["ultimate-nmap-parser"]="shifty0g/ultimate-nmap-parser"
-	["pydictor"]="LandGrey/pydictor"
-	["gitdorks_go"]="damit5/gitdorks_go"
+	# ["CMSeeK"]="Tuhinshubhra/CMSeeK"
+	# ["fav-up"]="pielco11/fav-up"
+	# ["massdns"]="blechschmidt/massdns"
+	# ["Oralyzer"]="r0075h3ll/Oralyzer"
+	# ["testssl.sh"]="drwetter/testssl.sh"
+	# ["JSA"]="w9w/JSA"
+	# ["CloudHunter"]="belane/CloudHunter"
+	# ["ultimate-nmap-parser"]="shifty0g/ultimate-nmap-parser"
+	# ["pydictor"]="LandGrey/pydictor"
+	# ["gitdorks_go"]="damit5/gitdorks_go"
 	["smuggler"]="defparam/smuggler"
-	["Web-Cache-Vulnerability-Scanner"]="Hackmanit/Web-Cache-Vulnerability-Scanner"
-	["regulator"]="cramppet/regulator"
-	["gitleaks"]="gitleaks/gitleaks"
-	["trufflehog"]="trufflesecurity/trufflehog"
-	["nomore403"]="devploit/nomore403"
-	["SwaggerSpy"]="UndeadSec/SwaggerSpy"
-	["LeakSearch"]="JoelGMSec/LeakSearch"
+	# ["Web-Cache-Vulnerability-Scanner"]="Hackmanit/Web-Cache-Vulnerability-Scanner"
+	# ["regulator"]="cramppet/regulator"
+	# ["gitleaks"]="gitleaks/gitleaks"
+	# ["trufflehog"]="trufflesecurity/trufflehog"
+	# ["nomore403"]="devploit/nomore403"
+	# ["SwaggerSpy"]="UndeadSec/SwaggerSpy"
+	# ["LeakSearch"]="JoelGMSec/LeakSearch"
 	["ffufPostprocessing"]="Damian89/ffufPostprocessing"
-	["misconfig-mapper"]="intigriti/misconfig-mapper"
-	["Spoofy"]="MattKeeley/Spoofy"
-	["msftrecon"]="Arcanum-Sec/msftrecon"
-	["Scopify"]="Arcanum-Sec/Scopify"
-	["metagoofil"]="opsdisk/metagoofil"
-	["EmailHarvester"]="maldevel/EmailHarvester"
-	["reconftw_ai"]="six2dez/reconftw_ai"
+	# ["misconfig-mapper"]="intigriti/misconfig-mapper"
+	# ["Spoofy"]="MattKeeley/Spoofy"
+	# ["msftrecon"]="Arcanum-Sec/msftrecon"
+	# ["Scopify"]="Arcanum-Sec/Scopify"
+	# ["metagoofil"]="opsdisk/metagoofil"
+	# ["EmailHarvester"]="maldevel/EmailHarvester"
+	# ["reconftw_ai"]="six2dez/reconftw_ai"
 )
 
 # Function to display the banner
@@ -174,12 +180,11 @@ function install_tools() {
 		fi
 
 		# Install the Go tool
+		echo -e "${yellow}[+] Installing Golang tools: $gotool (${go_step}/${#gotools[@]})${reset}"
 		eval "${gotools[$gotool]}" &>/dev/null
 		exit_status=$?
-		if [[ $exit_status -eq 0 ]]; then
-			echo -e "${yellow}$gotool installed (${go_step}/${#gotools[@]})${reset}"
-		else
-			echo -e "${red}Unable to install $gotool, try manually (${go_step}/${#gotools[@]})${reset}"
+		if [[ $exit_status -ne 0 ]]; then
+			echo -e "${red}[-] Unable to install $gotool, try manually (${go_step}/${#gotools[@]})${reset}"
 			failed_tools+=("$gotool")
 			double_check=true
 		fi
@@ -203,7 +208,7 @@ function install_tools() {
 		eval pipx install "git+https://github.com/${pipxtools[$pipxtool]}" &>/dev/null
 		exit_status=$?
 		if [[ $exit_status -ne 0 ]]; then
-			echo -e "${red}Failed to install $pipxtool, try manually (${pipx_step}/${#pipxtools[@]})${reset}"
+			echo -e "${red}[-] Failed to install $pipxtool, try manually (${pipx_step}/${#pipxtools[@]})${reset}"
 			failed_pipx_tools+=("$pipxtool")
 			double_check=true
 			continue
@@ -213,13 +218,13 @@ function install_tools() {
 		eval pipx upgrade "${pipxtool}" &>/dev/null
 		exit_status=$?
 		if [[ $exit_status -ne 0 ]]; then
-			echo -e "${red}Failed to upgrade $pipxtool, try manually (${pipx_step}/${#pipxtools[@]})${reset}"
+			echo -e "${red}[-] Failed to upgrade $pipxtool, try manually (${pipx_step}/${#pipxtools[@]})${reset}"
 			failed_pipx_tools+=("$pipxtool")
 			double_check=true
 			continue
 		fi
 
-		echo -e "${yellow}$pipxtool installed (${pipx_step}/${#pipxtools[@]})${reset}"
+		echo -e "${yellow}[*] $pipxtool installed (${pipx_step}/${#pipxtools[@]})${reset}"
 	done
 
 	echo -e "\n${bblue}Running: Installing repositories (${#repos[@]})${reset}\n"
@@ -240,7 +245,7 @@ function install_tools() {
 			git clone --filter="blob:none" "https://github.com/${repos[$repo]}" "${dir}/${repo}" &>/dev/null
 			exit_status=$?
 			if [[ $exit_status -ne 0 ]]; then
-				echo -e "${red}Unable to clone repository $repo.${reset}"
+				echo -e "${red}[-] Unable to clone repository $repo.${reset}"
 				failed_repos+=("$repo")
 				double_check=true
 				continue
@@ -249,7 +254,7 @@ function install_tools() {
 
 		# Navigate to the repository directory
 		cd "${dir}/${repo}" || {
-			echo -e "${red}Failed to navigate to directory '${dir}/${repo}'${reset}"
+			echo -e "${red}[-] Failed to navigate to directory '${dir}/${repo}'${reset}"
 			failed_repos+=("$repo")
 			double_check=true
 			continue
@@ -259,7 +264,7 @@ function install_tools() {
 		git pull &>/dev/null
 		exit_status=$?
 		if [[ $exit_status -ne 0 ]]; then
-			echo -e "${red}Failed to pull updates for repository $repo.${reset}"
+			echo -e "${red}[-] Failed to pull updates for repository $repo.${reset}"
 			failed_repos+=("$repo")
 			double_check=true
 			continue
@@ -329,11 +334,10 @@ function install_tools() {
 			exit 1
 		}
 
-		echo -e "${yellow}$repo installed (${repos_step}/${#repos[@]})${reset}"
+		echo -e "${green}[*] $repo installed (${repos_step}/${#repos[@]})${reset}"
 	done
 
-	# Notify and ensure subfinder is installed twice (as per original script)
-	notify &>/dev/null
+	# Ensure subfinder is installed twice (as per original script)
 	subfinder &>/dev/null
 	subfinder &>/dev/null
 	mkdir -p ${NUCLEI_TEMPLATES_PATH} &>/dev/null
@@ -473,14 +477,8 @@ function install_system_packages() {
 
 	if [[ -f /etc/debian_version ]]; then
 		install_apt
-	elif [[ -f /etc/redhat-release ]]; then
-		install_yum
-	elif [[ -f /etc/arch-release ]]; then
-		install_pacman
 	elif [[ $IS_MAC == "True" ]]; then
 		install_brew
-	elif [[ -f /etc/os-release ]]; then
-		install_yum # Assuming RedHat-based
 	else
 		echo -e "${bred}[!] Unsupported OS. Please install dependencies manually.${reset}"
 		exit 1
@@ -489,16 +487,61 @@ function install_system_packages() {
 
 # Function to install required packages for Debian-based systems
 function install_apt() {
-	$SUDO apt-get update -y &>/dev/null
-	$SUDO apt-get install -y python3 python3-pip python3-venv pipx python3-virtualenv build-essential gcc cmake ruby whois git curl libpcap-dev wget zip python3-dev pv dnsutils libssl-dev libffi-dev libxml2-dev libxslt1-dev zlib1g-dev nmap jq apt-transport-https lynx medusa xvfb libxml2-utils procps bsdmainutils libdata-hexdump-perl &>/dev/null
-	# Move chromium browser dependencies (required by `nuclei -headless -id screenshot`) into a separate apt install command, and add a fallback for Ubuntu 24.04 (where `libasound2` is renamed to `libasound2t64`)
-	$SUDO apt-get install -y libnss3 libatk1.0-0 libatk-bridge2.0-0 libcups2 libxkbcommon-x11-0 libxcomposite-dev libxdamage1 libxrandr2 libgbm-dev libpangocairo-1.0-0 libasound2 &>/dev/null ||
-		$SUDO apt-get install -y libnss3 libatk1.0-0 libatk-bridge2.0-0 libcups2 libxkbcommon-x11-0 libxcomposite-dev libxdamage1 libxrandr2 libgbm-dev libpangocairo-1.0-0 libasound2t64 &>/dev/null
-	curl https://sh.rustup.rs -sSf | sh -s -- -y >/dev/null 2>&1
-	source "${HOME}/.cargo/env"
-	cargo install ripgen &>/dev/null
-	pipx ensurepath -f &>/dev/null
- 	pip install jsbeautifier &>/dev/null
+	# Run apt update only once per session (optional cache file check)
+	if [ ! -f /var/lib/apt/periodic/update-success-stamp ]; then
+		echo -e "${blue}[+] Running apt-get update...${reset}"
+		$SUDO apt-get update -y &>/dev/null
+	else
+		echo -e "${green}[*] Skipping apt-get update (already updated recently)${reset}"
+	fi
+
+	# Define core packages
+	core_packages=(
+		python3 python3-pip python3-venv pipx python3-virtualenv build-essential gcc cmake ruby whois git curl
+		libpcap-dev wget zip python3-dev pv dnsutils libssl-dev libffi-dev libxml2-dev libxslt1-dev zlib1g-dev
+		nmap jq apt-transport-https lynx medusa xvfb libxml2-utils procps bsdmainutils libdata-hexdump-perl
+	)
+
+	# Install core packages if not already installed
+	for pkg in "${core_packages[@]}"; do
+		if ! dpkg -s "$pkg" &>/dev/null; then
+			echo -e "${yellow}[+] Installing missing package: $pkg${reset}"
+			$SUDO apt-get install -y "$pkg" &>/dev/null
+		else
+			echo -e "${green}[*] Package $pkg already installed${reset}"
+		fi
+	done
+
+	# Remove no longer required packages
+	$SUDO apt-get autoremove -y &>/dev/null
+
+	# Rust & ripgen check
+	if ! command -v cargo &>/dev/null; then
+		echo -e "${yellow}[+] Installing Rust toolchain...${reset}"
+		curl https://sh.rustup.rs -sSf | sh -s -- -y
+		source "${HOME}/.cargo/env"
+	else
+		echo -e "${green}[*] Rust already installed${reset}"
+	fi
+
+	if ! command -v ripgen &>/dev/null; then
+		echo -e "${yellow}[+] Installing ripgen...${reset}"
+		cargo install ripgen
+	else
+		echo -e "${green}[*] ripgen already installed${reset}"
+	fi
+
+	# pipx
+	if ! command -v pipx &>/dev/null; then
+		echo -e "${yellow}[+] Ensuring pipx is installed...${reset}"
+		$SUDO python3 -m pip install pipx
+		pipx completions
+		pipx ensurepath -f
+	else
+		echo -e "${green}[*] pipx already installed${reset}"
+	fi
+
+	echo -e
 }
 
 # Function to install required packages for macOS
@@ -515,30 +558,13 @@ function install_brew() {
 	cargo install ripgen &>/dev/null
 }
 
-# Function to install required packages for RedHat-based systems
-function install_yum() {
-	$SUDO yum groupinstall "Development Tools" -y &>/dev/null
-	$SUDO yum install -y python3 python3-pip gcc cmake ruby git curl libpcap whois wget pipx zip pv bind-utils openssl-devel libffi-devel libxml2-devel libxslt-devel zlib-devel nmap jq lynx medusa xorg-x11-server-xvfb &>/dev/null
-	curl https://sh.rustup.rs -sSf | sh -s -- -y >/dev/null 2>&1
-	source "${HOME}/.cargo/env"
-	cargo install ripgen &>/dev/null
-}
-
-# Function to install required packages for Arch-based systems
-function install_pacman() {
-	$SUDO pacman -Sy --noconfirm python python-pip base-devel gcc cmake ruby git curl libpcap python-pipx whois wget zip pv bind openssl libffi libxml2 libxslt zlib nmap jq lynx medusa xorg-server-xvfb &>/dev/null
-	curl https://sh.rustup.rs -sSf | sh -s -- -y >/dev/null 2>&1
-	source "${HOME}/.cargo/env"
-	cargo install ripgen &>/dev/null
-}
-
 # Function to perform initial setup
 function initial_setup() {
 	banner
 	reset_git_proxies
 
-	echo -e "${bblue}Running: Checking for updates${reset}\n"
-	check_updates
+	# echo -e "${bblue}Running: Checking for updates${reset}\n"
+	# check_updates
 
 	echo -e "${bblue}Running: Installing system packages${reset}\n"
 	install_system_packages
@@ -552,12 +578,12 @@ function initial_setup() {
 	mkdir -p ${HOME}/.config/nuclei/
 	touch "${dir}/.github_tokens"
 	touch "${dir}/.gitlab_tokens"
-
 	eval pipx ensurepath $DEBUG_STD
 	source "${HOME}/${profile_shell}"
 
 	install_tools
 
+	echo -e "THIS\n"
 	# Repositorios con configuraciones especiales
 	echo -e "${bblue}\nRunning: Configuring special repositories${reset}\n"
 
@@ -567,7 +593,7 @@ function initial_setup() {
 		
 		eval git -C "${NUCLEI_TEMPLATES_PATH}" pull $DEBUG_STD
 		eval git -C "${NUCLEI_TEMPLATES_PATH}/extra_templates" pull $DEBUG_STD
-		eval git -C "${tools}/fuzzing-templates" pull $DEBUG_STD
+		eval git -C "${tools}/nuclei-templates" pull $DEBUG_STD
 		eval nuclei -update-templates update-template-dir "${NUCLEI_TEMPLATES_PATH}" $DEBUG_STD
 	fi
 	
