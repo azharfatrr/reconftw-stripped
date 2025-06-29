@@ -19,6 +19,12 @@ source "$CONFIG_FILE"
 dir="${tools}"
 double_check=false
 
+# Tools check
+failed_tools=()
+failed_pipx_tools=()
+failed_repos=()
+failed_files=()
+
 # ARM Detection
 ARCH=$(uname -m)
 
@@ -112,9 +118,9 @@ declare -A pipxtools=(
 # Declare repositories and their paths
 declare -A repos=(
 	# ["dorks_hunter"]="six2dez/dorks_hunter"
-	# ["gf"]="tomnomnom/gf"
-	# ["Gf-Patterns"]="1ndianl33t/Gf-Patterns"
-	# ["sus_params"]="g0ldencybersec/sus_params"
+	["gf"]="tomnomnom/gf"
+	["Gf-Patterns"]="1ndianl33t/Gf-Patterns"
+	["sus_params"]="g0ldencybersec/sus_params"
 	["Corsy"]="s0md3v/Corsy"
 	# ["CMSeeK"]="Tuhinshubhra/CMSeeK"
 	# ["fav-up"]="pielco11/fav-up"
@@ -144,6 +150,22 @@ declare -A repos=(
 	# ["reconftw_ai"]="six2dez/reconftw_ai"
 )
 
+# Download required files with error handling
+declare -A downloads=(
+	["getjswords"]="https://raw.githubusercontent.com/m4ll0k/Bug-Bounty-Toolz/master/getjswords.py ${tools}/getjswords.py"
+	["subdomains_huge"]="https://raw.githubusercontent.com/n0kovo/n0kovo_subdomains/main/n0kovo_subdomains_huge.txt ${subs_wordlist_big}"
+	["trusted_resolvers"]="https://gist.githubusercontent.com/six2dez/ae9ed7e5c786461868abd3f2344401b6/raw ${resolvers_trusted}"
+	["resolvers"]="https://raw.githubusercontent.com/trickest/resolvers/main/resolvers.txt ${resolvers}"
+	["subs_wordlist"]="https://gist.github.com/six2dez/a307a04a222fab5a57466c51e1569acf/raw ${subs_wordlist}"
+	["permutations_list"]="https://gist.github.com/six2dez/ffc2b14d283e8f8eff6ac83e20a3c4b4/raw ${tools}/permutations_list.txt"
+	["fuzz_wordlist"]="https://raw.githubusercontent.com/six2dez/OneListForAll/main/onelistforallmicro.txt ${fuzz_wordlist}"
+	["lfi_wordlist"]="https://gist.githubusercontent.com/six2dez/a89a0c7861d49bb61a09822d272d5395/raw ${lfi_wordlist}"
+	["ssti_wordlist"]="https://gist.githubusercontent.com/six2dez/ab5277b11da7369bf4e9db72b49ad3c1/raw ${ssti_wordlist}"
+	["headers_inject"]="https://gist.github.com/six2dez/d62ab8f8ffd28e1c206d401081d977ae/raw ${tools}/headers_inject.txt"
+	["axiom_config"]="https://gist.githubusercontent.com/six2dez/6e2d9f4932fd38d84610eb851014b26e/raw ${tools}/axiom_config.sh"
+	["jsluice_patterns"]="https://gist.githubusercontent.com/six2dez/2aafa8dc2b682bb0081684e71900e747/raw ${tools}/jsluice_patterns.json"
+)
+
 # Function to display the banner
 function banner() {
 	tput clear
@@ -164,17 +186,47 @@ function banner() {
 EOF
 }
 
+
+
 # Function to install Go tools
 function install_tools() {
+	install_golang_tools
+	install_pipx_tools
+	install_repo_tools
+	configuring_special_repositories
+
+	# Ensure subfinder is installed twice (as per original script)
+	subfinder &>/dev/null
+	subfinder &>/dev/null
+	mkdir -p ${NUCLEI_TEMPLATES_PATH} &>/dev/null
+	#cent init -f &>/dev/null
+	#cent -p ${NUCLEI_TEMPLATES_PATH} &>/dev/null
+
+	# Handle failed installations
+	if [[ ${#failed_tools[@]} -ne 0 ]]; then
+		echo -e "\n${red}Failed to install the following Go tools: ${failed_tools[*]}${reset}"
+	fi
+
+	if [[ ${#failed_pipx_tools[@]} -ne 0 ]]; then
+		echo -e "\n${red}Failed to install the following pipx tools: ${failed_pipx_tools[*]}${reset}"
+	fi
+
+	if [[ ${#failed_repos[@]} -ne 0 ]]; then
+		echo -e "\n${red}Failed to clone or update the following repositories:\n${failed_repos[*]}${reset}"
+	fi
+}
+
+# Function to install Golang tools
+function install_golang_tools() {
 	echo -e "${bblue}Running: Installing Golang tools (${#gotools[@]})${reset}\n"
 
 	local go_step=0
-	local failed_tools=()
+	
 	for gotool in "${!gotools[@]}"; do
 		((go_step++))
 		if [[ $upgrade_tools == "false" ]]; then
 			if command -v "$gotool" &>/dev/null; then
-				echo -e "[${yellow}SKIPPING${reset}] $gotool already installed at $(command -v "$gotool")"
+				echo -e "${green}[*] $gotool already installed at $(command -v "$gotool") ${reset}"
 				continue
 			fi
 		fi
@@ -189,22 +241,25 @@ function install_tools() {
 			double_check=true
 		fi
 	done
+}
 
+# Funtion to install Pipx tools
+function install_pipx_tools() {
 	echo -e "\n${bblue}Running: Installing pipx tools (${#repos[@]})${reset}\n"
 
 	local pipx_step=0
-	local failed_pipx_tools=()
 
 	for pipxtool in "${!pipxtools[@]}"; do
 		((pipx_step++))
 		if [[ $upgrade_tools == "false" ]]; then
 			if command -v "$pipxtool" &>/dev/null; then
-				echo -e "[${yellow}SKIPPING${reset}] $pipxtool already installed at $(command -v "$pipxtool")"
+				echo -e "${green}[*] $pipxtool already installed at $(command -v "$pipxtool") ${reset}"
 				continue
 			fi
 		fi
 
 		# Install the pipx tool
+		echo -e "${yellow}[+] Installing pipx tools: $pipxtool (${pipx_step}/${#pipxtools[@]})${reset}"
 		eval pipx install "git+https://github.com/${pipxtools[$pipxtool]}" &>/dev/null
 		exit_status=$?
 		if [[ $exit_status -ne 0 ]]; then
@@ -223,24 +278,27 @@ function install_tools() {
 			double_check=true
 			continue
 		fi
-
-		echo -e "${yellow}[*] $pipxtool installed (${pipx_step}/${#pipxtools[@]})${reset}"
 	done
+}
 
+# Function to install repo tools
+function install_repo_tools() {
 	echo -e "\n${bblue}Running: Installing repositories (${#repos[@]})${reset}\n"
 
 	local repos_step=0
-	local failed_repos=()
 
 	for repo in "${!repos[@]}"; do
 		((repos_step++))
 		if [[ $upgrade_tools == "false" ]]; then
 			if [[ -d "${dir}/${repo}" ]]; then
-				echo -e "[${yellow}SKIPPING${reset}] Repository $repo already cloned in ${dir}/${repo}"
+				echo -e "${green}[*] Repository $repo already cloned in ${dir}/${repo}${reset}"
 				continue
 			fi
 		fi
+
 		# Clone the repository
+		echo -e "${yellow}[+] Installing repo tools: $repo (${repos_step}/${#repos[@]})${reset}"
+
 		if [[ ! -d "${dir}/${repo}" || -z "$(ls -A "${dir}/${repo}")" ]]; then
 			git clone --filter="blob:none" "https://github.com/${repos[$repo]}" "${dir}/${repo}" &>/dev/null
 			exit_status=$?
@@ -333,29 +391,127 @@ function install_tools() {
 			echo -e "${red}Failed to navigate back to directory '$dir'.${reset}"
 			exit 1
 		}
-
-		echo -e "${green}[*] $repo installed (${repos_step}/${#repos[@]})${reset}"
 	done
+}
 
-	# Ensure subfinder is installed twice (as per original script)
-	subfinder &>/dev/null
-	subfinder &>/dev/null
-	mkdir -p ${NUCLEI_TEMPLATES_PATH} &>/dev/null
-	#cent init -f &>/dev/null
-	#cent -p ${NUCLEI_TEMPLATES_PATH} &>/dev/null
+# Download required files with error handling
+function download_required_files() {
+	echo -e "\n${bblue}Running: Downloading required files${reset}\n"
 
-	# Handle failed installations
-	if [[ ${#failed_tools[@]} -ne 0 ]]; then
-		echo -e "\n${red}Failed to install the following Go tools: ${failed_tools[*]}${reset}"
+	local files_step=0
+
+	for key in "${!downloads[@]}"; do
+		((files_step++))
+
+		url="${downloads[$key]% *}"
+		destination="${downloads[$key]#* }"
+
+		# Skip download if provider-config.yaml already exists
+		if [[ -f "$destination" ]]; then
+			echo -e "${green}[*] $key as it already exists at $destination.${reset}"
+			continue
+		fi
+
+		echo -e "${yellow}[+] Downloading files: $key (${files_step}/${#downloads[@]})${reset}"
+		wget -q -O "$destination" "$url" || {
+			echo -e "${red}[!] Failed to download $key from $url.${reset}"
+			failed_files+=("$key")
+			continue
+		}
+	done
+}
+
+function configuring_special_repositories() {
+	# Repositorios con configuraciones especiales
+	echo -e "${bblue}\nRunning: Configuring special repositories${reset}\n"
+
+	# Nuclei Templates
+	if [[ ! -d ${NUCLEI_TEMPLATES_PATH} ]]; then
+		echo -e "${yellow}[+] Cloning Nuclei templates...${reset}"
+		
+		eval git -C "${NUCLEI_TEMPLATES_PATH}" pull $DEBUG_STD
+		eval git -C "${NUCLEI_TEMPLATES_PATH}/extra_templates" pull $DEBUG_STD
+		eval git -C "${tools}/nuclei-templates" pull $DEBUG_STD
+	fi
+	echo -e "${yellow}[+] Updating Nuclei templates...${reset}"
+	eval nuclei -update-templates update-template-dir "${NUCLEI_TEMPLATES_PATH}" $DEBUG_STD
+	
+	if [[ ! -d ${NUCLEI_FUZZING_TEMPLATES_PATH} ]]; then
+		mkdir -p ${NUCLEI_FUZZING_TEMPLATES_PATH} $DEBUG_STD
+		eval git clone https://github.com/projectdiscovery/fuzzing-templates "${NUCLEI_FUZZING_TEMPLATES_PATH}" $DEBUG_STD
 	fi
 
-	if [[ ${#failed_pipx_tools[@]} -ne 0 ]]; then
-		echo -e "\n${red}Failed to install the following pipx tools: ${failed_pipx_tools[*]}${reset}"
+	# sqlmap
+	if [[ ! -d "${dir}/sqlmap" ]]; then
+		echo -e "${yellow}[+] Cloning sqlmap...${reset}"
+		eval git clone --depth 1 https://github.com/sqlmapproject/sqlmap.git "${dir}/sqlmap" $DEBUG_STD
+	else
+		echo -e "${yellow}[+] Updating sqlmap...${reset}"
+		eval git -C "${dir}/sqlmap" pull $DEBUG_STD
 	fi
 
-	if [[ ${#failed_repos[@]} -ne 0 ]]; then
-		echo -e "\n${red}Failed to clone or update the following repositories:\n${failed_repos[*]}${reset}"
+	# massdns
+	# if [[ ! -d "${dir}/massdns" ]]; then
+	# 	#printf "${yellow}Cloning and compiling massdns...${reset}"
+	# 	eval git clone https://github.com/blechschmidt/massdns.git "${dir}/massdns" $DEBUG_STD
+	# 	eval make -C "${dir}/massdns" $DEBUG_STD
+	# 	eval strip -s "${dir}/massdns/bin/massdns" $DEBUG_ERROR
+	# 	eval $SUDO cp "${dir}/massdns/bin/massdns" /usr/local/bin/ $DEBUG_ERROR
+	# else
+	# 	#printf "${yellow}Updating massdns...${reset}"
+	# 	eval git -C "${dir}/massdns" pull $DEBUG_STD
+	# fi
+
+	# gf patterns
+	if [[ ! -d "$HOME/.gf" ]]; then
+		echo -e "${yellow}[+] Installing gf patterns...${reset}"
+		eval git clone https://github.com/tomnomnom/gf.git "${dir}/gf" $DEBUG_STD
+		eval cp -r "${dir}/gf/examples" ~/.gf $DEBUG_ERROR
+		eval git clone https://github.com/1ndianl33t/Gf-Patterns "${dir}/Gf-Patterns" $DEBUG_STD
+		eval cp "${dir}/Gf-Patterns"/*.json ~/.gf/ $DEBUG_ERROR
+	else
+		echo -e "${yellow}[+] Updating gf patterns...${reset}"
+		eval git -C "${dir}/Gf-Patterns" pull $DEBUG_STD
+		eval cp "${dir}/Gf-Patterns"/*.json ~/.gf/ $DEBUG_ERROR
 	fi
+}
+
+function configuring_resolvers() {
+	echo -e "${bblue}\nRunning: Configuring resolvers${reset}\n"
+
+	# Update resolvers if generate_resolvers is true
+	if [[ $generate_resolvers == true ]]; then
+		if [[ ! -s $resolvers || $(find "$resolvers" -mtime +1 -print) ]]; then
+			echo -e "${yellow}Checking resolvers lists...\nAccurate resolvers are the key to great results.\nThis may take around 10 minutes if it's not updated.${reset}\n"
+			rm -f "$resolvers" &>/dev/null
+			dnsvalidator -tL https://public-dns.info/nameservers.txt -threads "$DNSVALIDATOR_THREADS" -o "$resolvers" &>/dev/null
+			dnsvalidator -tL https://raw.githubusercontent.com/blechschmidt/massdns/master/lists/resolvers.txt -threads "$DNSVALIDATOR_THREADS" -o tmp_resolvers &>/dev/null
+
+			if [[ -s "tmp_resolvers" ]]; then
+				cat tmp_resolvers | anew -q "$resolvers"
+				rm -f tmp_resolvers &>/dev/null
+			fi
+
+			[[ ! -s $resolvers ]] && wget -q -O "$resolvers" https://raw.githubusercontent.com/trickest/resolvers/main/resolvers.txt
+			[[ ! -s $resolvers_trusted ]] && wget -q -O "$resolvers_trusted" https://gist.githubusercontent.com/six2dez/ae9ed7e5c786461868abd3f2344401b6/raw/trusted_resolvers.txt
+			echo -e "${yellow}Resolvers updated.${reset}\n"
+		fi
+		generate_resolvers=false
+	else
+		if [[ -s $resolvers && $(find "$resolvers" -mtime +1 -print) ]]; then
+			echo -e "${yellow}Checking resolvers lists...\nAccurate resolvers are the key to great results.\nDownloading new resolvers.${reset}\n"
+			wget -q -O "$resolvers" https://raw.githubusercontent.com/trickest/resolvers/main/resolvers.txt
+			wget -q -O "$resolvers_trusted" https://gist.githubusercontent.com/six2dez/ae9ed7e5c786461868abd3f2344401b6/raw/trusted_resolvers.txt
+			echo -e "${yellow}Resolvers updated.${reset}\n"
+		fi
+	fi
+}
+
+function copy_golang_tools() {
+	echo -e "${bblue}\nRunning: Copying golang tools${reset}\n"
+
+	strip -s "${GOPATH}/bin/"* &>/dev/null || true
+	$SUDO cp "${GOPATH}/bin/"* /usr/local/bin/ &>/dev/null || true
 }
 
 # Function to reset git proxy settings
@@ -474,6 +630,7 @@ EOF
 
 # Function to install system packages based on OS
 function install_system_packages() {
+	echo -e "${bblue}Running: Installing system packages${reset}\n"
 
 	if [[ -f /etc/debian_version ]]; then
 		install_apt
@@ -489,7 +646,7 @@ function install_system_packages() {
 function install_apt() {
 	# Run apt update only once per session (optional cache file check)
 	if [ ! -f /var/lib/apt/periodic/update-success-stamp ]; then
-		echo -e "${blue}[+] Running apt-get update...${reset}"
+		echo -e "${yellow}[+] Running apt-get update...${reset}"
 		$SUDO apt-get update -y &>/dev/null
 	else
 		echo -e "${green}[*] Skipping apt-get update (already updated recently)${reset}"
@@ -558,20 +715,8 @@ function install_brew() {
 	cargo install ripgen &>/dev/null
 }
 
-# Function to perform initial setup
-function initial_setup() {
-	banner
-	reset_git_proxies
-
-	# echo -e "${bblue}Running: Checking for updates${reset}\n"
-	# check_updates
-
-	echo -e "${bblue}Running: Installing system packages${reset}\n"
-	install_system_packages
-
-	install_golang_version
-
-	echo -e "${bblue}Running: Installing Python requirements${reset}\n"
+function configuring_system_path() {
+	echo -e "${bblue}Running: Configuring system path${reset}\n"
 	mkdir -p ${HOME}/.gf
 	mkdir -p "$tools"
 	mkdir -p ${HOME}/.config/notify/
@@ -580,134 +725,31 @@ function initial_setup() {
 	touch "${dir}/.gitlab_tokens"
 	eval pipx ensurepath $DEBUG_STD
 	source "${HOME}/${profile_shell}"
+}
 
+# Function to perform initial setup
+function initial_setup() {
+	banner
+	reset_git_proxies
+
+	# echo -e "${bblue}Running: Checking for updates${reset}\n"
+	# check_updates
+
+	install_system_packages
+	configuring_system_path
+
+	install_golang_version
 	install_tools
+	copy_golang_tools
 
-	echo -e "THIS\n"
-	# Repositorios con configuraciones especiales
-	echo -e "${bblue}\nRunning: Configuring special repositories${reset}\n"
+	download_required_files
 
-	# Nuclei Templates
-	if [[ ! -d ${NUCLEI_TEMPLATES_PATH} ]]; then
-		#printf "${yellow}Cloning Nuclei templates...${reset}\n"
-		
-		eval git -C "${NUCLEI_TEMPLATES_PATH}" pull $DEBUG_STD
-		eval git -C "${NUCLEI_TEMPLATES_PATH}/extra_templates" pull $DEBUG_STD
-		eval git -C "${tools}/nuclei-templates" pull $DEBUG_STD
-		eval nuclei -update-templates update-template-dir "${NUCLEI_TEMPLATES_PATH}" $DEBUG_STD
-	fi
-	
-	if [[ ! -d ${NUCLEI_FUZZING_TEMPLATES_PATH} ]]; then
-		mkdir -p ${NUCLEI_FUZZING_TEMPLATES_PATH} $DEBUG_STD
-		eval git clone https://github.com/projectdiscovery/fuzzing-templates "${NUCLEI_FUZZING_TEMPLATES_PATH}" $DEBUG_STD
-	fi
+	# # Make axiom_config.sh executable
+	# chmod +x "${tools}/axiom_config.sh" || {
+	# 	echo -e "${red}[!] Failed to make axiom_config.sh executable.${reset}"
+	# }
 
-	# sqlmap
-	if [[ ! -d "${dir}/sqlmap" ]]; then
-		#printf "${yellow}Cloning sqlmap...${reset}\n"
-		eval git clone --depth 1 https://github.com/sqlmapproject/sqlmap.git "${dir}/sqlmap" $DEBUG_STD
-	else
-		#printf "${yellow}Updating sqlmap...${reset}\n"
-		eval git -C "${dir}/sqlmap" pull $DEBUG_STD
-	fi
-
-	# massdns
-	if [[ ! -d "${dir}/massdns" ]]; then
-		#printf "${yellow}Cloning and compiling massdns...${reset}\n"
-		eval git clone https://github.com/blechschmidt/massdns.git "${dir}/massdns" $DEBUG_STD
-		eval make -C "${dir}/massdns" $DEBUG_STD
-		eval strip -s "${dir}/massdns/bin/massdns" $DEBUG_ERROR
-		eval $SUDO cp "${dir}/massdns/bin/massdns" /usr/local/bin/ $DEBUG_ERROR
-	else
-		#printf "${yellow}Updating massdns...${reset}\n"
-		eval git -C "${dir}/massdns" pull $DEBUG_STD
-	fi
-
-	# gf patterns
-	if [[ ! -d "$HOME/.gf" ]]; then
-		#printf "${yellow}Installing gf patterns...${reset}\n"
-		eval git clone https://github.com/tomnomnom/gf.git "${dir}/gf" $DEBUG_STD
-		eval cp -r "${dir}/gf/examples" ~/.gf $DEBUG_ERROR
-		eval git clone https://github.com/1ndianl33t/Gf-Patterns "${dir}/Gf-Patterns" $DEBUG_STD
-		eval cp "${dir}/Gf-Patterns"/*.json ~/.gf/ $DEBUG_ERROR
-	else
-		#printf "${yellow}Updating gf patterns...${reset}\n"
-		eval git -C "${dir}/Gf-Patterns" pull $DEBUG_STD
-	fi
-
-	echo -e "\n${bblue}Running: Downloading required files${reset}\n"
-
-	mkdir -p ${HOME}/.config/notify
-	# Download required files with error handling
-	declare -A downloads=(
-	    ["notify_provider_config"]="https://gist.githubusercontent.com/six2dez/23a996bca189a11e88251367e6583053/raw ${HOME}/.config/notify/provider-config.yaml"
-	    ["getjswords"]="https://raw.githubusercontent.com/m4ll0k/Bug-Bounty-Toolz/master/getjswords.py ${tools}/getjswords.py"
-	    ["subdomains_huge"]="https://raw.githubusercontent.com/n0kovo/n0kovo_subdomains/main/n0kovo_subdomains_huge.txt ${subs_wordlist_big}"
-	    ["trusted_resolvers"]="https://gist.githubusercontent.com/six2dez/ae9ed7e5c786461868abd3f2344401b6/raw ${resolvers_trusted}"
-	    ["resolvers"]="https://raw.githubusercontent.com/trickest/resolvers/main/resolvers.txt ${resolvers}"
-	    ["subs_wordlist"]="https://gist.github.com/six2dez/a307a04a222fab5a57466c51e1569acf/raw ${subs_wordlist}"
-	    ["permutations_list"]="https://gist.github.com/six2dez/ffc2b14d283e8f8eff6ac83e20a3c4b4/raw ${tools}/permutations_list.txt"
-	    ["fuzz_wordlist"]="https://raw.githubusercontent.com/six2dez/OneListForAll/main/onelistforallmicro.txt ${fuzz_wordlist}"
-	    ["lfi_wordlist"]="https://gist.githubusercontent.com/six2dez/a89a0c7861d49bb61a09822d272d5395/raw ${lfi_wordlist}"
-	    ["ssti_wordlist"]="https://gist.githubusercontent.com/six2dez/ab5277b11da7369bf4e9db72b49ad3c1/raw ${ssti_wordlist}"
-	    ["headers_inject"]="https://gist.github.com/six2dez/d62ab8f8ffd28e1c206d401081d977ae/raw ${tools}/headers_inject.txt"
-	    ["axiom_config"]="https://gist.githubusercontent.com/six2dez/6e2d9f4932fd38d84610eb851014b26e/raw ${tools}/axiom_config.sh"
-		["jsluice_patterns"]="https://gist.githubusercontent.com/six2dez/2aafa8dc2b682bb0081684e71900e747/raw ${tools}/jsluice_patterns.json"
-	)
-	
-	for key in "${!downloads[@]}"; do
-	    url="${downloads[$key]% *}"
-	    destination="${downloads[$key]#* }"
-	
-	    # Skip download if provider-config.yaml already exists
-	    if [[ "$key" == "notify_provider_config" && -f "$destination" ]]; then
-	        echo -e "[${yellow}SKIPPING${reset}] $key as it already exists at $destination.${reset}"
-	        continue
-	    fi
-	
-	    wget -q -O "$destination" "$url" || {
-	        echo -e "${red}[!] Failed to download $key from $url.${reset}"
-	        continue
-	    }
-	done
-
-	# Make axiom_config.sh executable
-	chmod +x "${tools}/axiom_config.sh" || {
-		echo -e "${red}[!] Failed to make axiom_config.sh executable.${reset}"
-	}
-
-	echo -e "${bblue}Running: Performing last configurations${reset}\n"
-
-	# Update resolvers if generate_resolvers is true
-	if [[ $generate_resolvers == true ]]; then
-		if [[ ! -s $resolvers || $(find "$resolvers" -mtime +1 -print) ]]; then
-			echo -e "${yellow}Checking resolvers lists...\nAccurate resolvers are the key to great results.\nThis may take around 10 minutes if it's not updated.${reset}\n"
-			rm -f "$resolvers" &>/dev/null
-			dnsvalidator -tL https://public-dns.info/nameservers.txt -threads "$DNSVALIDATOR_THREADS" -o "$resolvers" &>/dev/null
-			dnsvalidator -tL https://raw.githubusercontent.com/blechschmidt/massdns/master/lists/resolvers.txt -threads "$DNSVALIDATOR_THREADS" -o tmp_resolvers &>/dev/null
-
-			if [[ -s "tmp_resolvers" ]]; then
-				cat tmp_resolvers | anew -q "$resolvers"
-				rm -f tmp_resolvers &>/dev/null
-			fi
-
-			[[ ! -s $resolvers ]] && wget -q -O "$resolvers" https://raw.githubusercontent.com/trickest/resolvers/main/resolvers.txt
-			[[ ! -s $resolvers_trusted ]] && wget -q -O "$resolvers_trusted" https://gist.githubusercontent.com/six2dez/ae9ed7e5c786461868abd3f2344401b6/raw/trusted_resolvers.txt
-			echo -e "${yellow}Resolvers updated.${reset}\n"
-		fi
-		generate_resolvers=false
-	else
-		if [[ -s $resolvers && $(find "$resolvers" -mtime +1 -print) ]]; then
-			echo -e "${yellow}Checking resolvers lists...\nAccurate resolvers are the key to great results.\nDownloading new resolvers.${reset}\n"
-			wget -q -O "$resolvers" https://raw.githubusercontent.com/trickest/resolvers/main/resolvers.txt
-			wget -q -O "$resolvers_trusted" https://gist.githubusercontent.com/six2dez/ae9ed7e5c786461868abd3f2344401b6/raw/trusted_resolvers.txt
-			echo -e "${yellow}Resolvers updated.${reset}\n"
-		fi
-	fi
-
-	# Strip all Go binaries and copy to /usr/local/bin
-	strip -s "${GOPATH}/bin/"* &>/dev/null || true
-	$SUDO cp "${GOPATH}/bin/"* /usr/local/bin/ &>/dev/null || true
+	configuring_resolvers
 
 	# Final reminders
 	echo -e "${yellow}Remember to set your API keys:\n- subfinder (${HOME}/.config/subfinder/provider-config.yaml)\n- GitHub (${HOME}/Tools/.github_tokens)\n- GitLab (${HOME}/Tools/.gitlab_tokens)\n- SSRF Server (COLLAB_SERVER in reconftw.cfg or env var)\n- Blind XSS Server (XSS_SERVER in reconftw.cfg or env var)\n- notify (${HOME}/.config/notify/provider-config.yaml)\n- WHOISXML API (WHOISXML_API in reconftw.cfg or env var)\n${reset}"
