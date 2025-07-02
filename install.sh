@@ -43,111 +43,107 @@ fi
 
 # Declare Go tools and their installation commands
 declare -A gotools=(
-	# Subdomain Enumeration
 	["subfinder"]="go install -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest"
 	["dnsx"]="go install -v github.com/projectdiscovery/dnsx/cmd/dnsx@latest"
 	["tlsx"]="go install -v github.com/projectdiscovery/tlsx/cmd/tlsx@latest"
 	["amass"]="go install -v github.com/owasp-amass/amass/v4/...@master"
-
-	# Port Scanning
 	["naabu"]="go install -v github.com/projectdiscovery/naabu/v2/cmd/naabu@latest"
 	["smap"]="go install -v github.com/s0md3v/smap/cmd/smap@latest"
 	["nmapurls"]="go install -v github.com/sdcampbell/nmapurls@latest"
-	
 	["gf"]="go install -v github.com/tomnomnom/gf@latest"
-	# ["brutespray"]="go install -v github.com/x90skysn3k/brutespray@latest"
+	["brutespray"]="go install -v github.com/x90skysn3k/brutespray@latest"
 	["qsreplace"]="go install -v github.com/tomnomnom/qsreplace@latest"
 	["ffuf"]="go install -v github.com/ffuf/ffuf/v2@latest"
-	# ["github-subdomains"]="go install -v github.com/gwen001/github-subdomains@latest"
+	["github-subdomains"]="go install -v github.com/gwen001/github-subdomains@latest"
 	# ["gitlab-subdomains"]="go install -v github.com/gwen001/gitlab-subdomains@latest"
 	["nuclei"]="go install -v github.com/projectdiscovery/nuclei/v3/cmd/nuclei@latest"
 	["anew"]="go install -v github.com/tomnomnom/anew@latest"
-	# ["notify"]="go install -v github.com/projectdiscovery/notify/cmd/notify@latest"
+	["notify"]="go install -v github.com/projectdiscovery/notify/cmd/notify@latest"
 	["unfurl"]="go install -v github.com/tomnomnom/unfurl@v0.3.0"
 	["httpx"]="go install -v github.com/projectdiscovery/httpx/cmd/httpx@latest"
-	# ["github-endpoints"]="go install -v github.com/gwen001/github-endpoints@latest"
-	# ["subjs"]="go install -v github.com/lc/subjs@latest"
-	# ["Gxss"]="go install -v github.com/KathanP19/Gxss@latest"
+	["github-endpoints"]="go install -v github.com/gwen001/github-endpoints@latest"
+	["subjs"]="go install -v github.com/lc/subjs@latest"
+	["Gxss"]="go install -v github.com/KathanP19/Gxss@latest"
 	["katana"]="go install -v github.com/projectdiscovery/katana/cmd/katana@latest"
 	["crlfuzz"]="go install -v github.com/dwisiswant0/crlfuzz/cmd/crlfuzz@latest"
 	["dalfox"]="go install -v github.com/hahwul/dalfox/v2@latest"
-	# ["puredns"]="go install -v github.com/d3mondev/puredns/v2@latest"
-	# ["interactsh-client"]="go install -v github.com/projectdiscovery/interactsh/cmd/interactsh-client@latest"
-	# ["analyticsrelationships"]="go install -v github.com/Josue87/analyticsrelationships@latest"
-	# ["gotator"]="go install -v github.com/Josue87/gotator@latest"
-	# ["roboxtractor"]="go install -v github.com/Josue87/roboxtractor@latest"
-	# ["mapcidr"]="go install -v github.com/projectdiscovery/mapcidr/cmd/mapcidr@latest"
-	# ["cdncheck"]="go install -v github.com/projectdiscovery/cdncheck/cmd/cdncheck@latest"
-	# ["dnstake"]="go install -v github.com/pwnesia/dnstake/cmd/dnstake@latest"
-	# ["gitdorks_go"]="go install -v github.com/damit5/gitdorks_go@latest"
-	# ["dsieve"]="go install -v github.com/trickest/dsieve@master"
-	# ["inscope"]="go install -v github.com/tomnomnom/hacks/inscope@latest"
-	# ["enumerepo"]="go install -v github.com/trickest/enumerepo@latest"
-	# ["Web-Cache-Vulnerability-Scanner"]="go install -v github.com/Hackmanit/Web-Cache-Vulnerability-Scanner@latest"
-	# ["hakip2host"]="go install -v github.com/hakluke/hakip2host@latest"
+	["puredns"]="go install -v github.com/d3mondev/puredns/v2@latest"
+	["interactsh-client"]="go install -v github.com/projectdiscovery/interactsh/cmd/interactsh-client@latest"
+	["analyticsrelationships"]="go install -v github.com/Josue87/analyticsrelationships@latest"
+	["gotator"]="go install -v github.com/Josue87/gotator@latest"
+	["roboxtractor"]="go install -v github.com/Josue87/roboxtractor@latest"
+	["mapcidr"]="go install -v github.com/projectdiscovery/mapcidr/cmd/mapcidr@latest"
+	["cdncheck"]="go install -v github.com/projectdiscovery/cdncheck/cmd/cdncheck@latest"
+	["dnstake"]="go install -v github.com/pwnesia/dnstake/cmd/dnstake@latest"
+	["gitdorks_go"]="go install -v github.com/damit5/gitdorks_go@latest"
+	["dsieve"]="go install -v github.com/trickest/dsieve@master"
+	["inscope"]="go install -v github.com/tomnomnom/hacks/inscope@latest"
+	["enumerepo"]="go install -v github.com/trickest/enumerepo@latest"
+	["Web-Cache-Vulnerability-Scanner"]="go install -v github.com/Hackmanit/Web-Cache-Vulnerability-Scanner@latest"
+	["hakip2host"]="go install -v github.com/hakluke/hakip2host@latest"
 	["mantra"]="go install -v github.com/Brosck/mantra@latest"
 	["crt"]="go install -v github.com/cemulus/crt@latest"
-	# ["s3scanner"]="go install -v github.com/sa7mon/s3scanner@latest"
-	# ["shortscan"]="go install -v github.com/bitquark/shortscan/cmd/shortscan@latest"
-	# ["sns"]="go install github.com/sw33tLie/sns@latest"
-	# ["ppmap"]="go install -v github.com/kleiton0x00/ppmap@latest"
-	# ["sourcemapper"]="go install -v github.com/denandz/sourcemapper@latest"
-	# ["jsluice"]="go install -v github.com/BishopFox/jsluice/cmd/jsluice@latest"
+	["s3scanner"]="go install -v github.com/sa7mon/s3scanner@latest"
+	["shortscan"]="go install -v github.com/bitquark/shortscan/cmd/shortscan@latest"
+	["sns"]="go install github.com/sw33tLie/sns@latest"
+	["ppmap"]="go install -v github.com/kleiton0x00/ppmap@latest"
+	["sourcemapper"]="go install -v github.com/denandz/sourcemapper@latest"
+	["jsluice"]="go install -v github.com/BishopFox/jsluice/cmd/jsluice@latest"
 	["urlfinder"]="go install -v github.com/projectdiscovery/urlfinder/cmd/urlfinder@latest"
-	# ["cent"]="go install -v github.com/xm1k3/cent@latest"
-	# ["csprecon"]="go install github.com/edoardottt/csprecon/cmd/csprecon@latest"
-	# ["VhostFinder"]="go install -v github.com/wdahlenburg/VhostFinder@latest"
-	# ["misconfig-mapper"]="go install github.com/intigriti/misconfig-mapper/cmd/misconfig-mapper@latest"
+	["cent"]="go install -v github.com/xm1k3/cent@latest"
+	["csprecon"]="go install github.com/edoardottt/csprecon/cmd/csprecon@latest"
+	["VhostFinder"]="go install -v github.com/wdahlenburg/VhostFinder@latest"
+	["misconfig-mapper"]="go install github.com/intigriti/misconfig-mapper/cmd/misconfig-mapper@latest"
 )
 
 # Declare pipx tools and their paths
 declare -A pipxtools=(
-	# ["dnsvalidator"]="vortexau/dnsvalidator"
-	# ["interlace"]="codingo/Interlace"
+	["dnsvalidator"]="vortexau/dnsvalidator"
+	["interlace"]="codingo/Interlace"
 	["wafw00f"]="EnableSecurity/wafw00f"
-	# ["commix"]="commixproject/commix"
-	# ["urless"]="xnl-h4ck3r/urless"
+	["commix"]="commixproject/commix"
+	["urless"]="xnl-h4ck3r/urless"
 	["ghauri"]="r0oth3x49/ghauri"
-	# ["xnLinkFinder"]="xnl-h4ck3r/xnLinkFinder"
-	# ["xnldorker"]="xnl-h4ck3r/xnldorker"
-	# ["porch-pirate"]="MandConsultingGroup/porch-pirate"
-	# ["p1radup"]="iambouali/p1radup"
+	["xnLinkFinder"]="xnl-h4ck3r/xnLinkFinder"
+	["xnldorker"]="xnl-h4ck3r/xnldorker"
+	["porch-pirate"]="MandConsultingGroup/porch-pirate"
+	["p1radup"]="iambouali/p1radup"
 	# ["subwiz"]="hadriansecurity/subwiz"
 )
 
 # Declare repositories and their paths
 declare -A repos=(
-	# ["dorks_hunter"]="six2dez/dorks_hunter"
+	["dorks_hunter"]="six2dez/dorks_hunter"
 	["gf"]="tomnomnom/gf"
 	["Gf-Patterns"]="1ndianl33t/Gf-Patterns"
 	["sus_params"]="g0ldencybersec/sus_params"
 	["Corsy"]="s0md3v/Corsy"
-	# ["CMSeeK"]="Tuhinshubhra/CMSeeK"
-	# ["fav-up"]="pielco11/fav-up"
-	# ["massdns"]="blechschmidt/massdns"
-	# ["Oralyzer"]="r0075h3ll/Oralyzer"
-	# ["testssl.sh"]="drwetter/testssl.sh"
-	# ["JSA"]="w9w/JSA"
-	# ["CloudHunter"]="belane/CloudHunter"
-	# ["ultimate-nmap-parser"]="shifty0g/ultimate-nmap-parser"
-	# ["pydictor"]="LandGrey/pydictor"
-	# ["gitdorks_go"]="damit5/gitdorks_go"
+	["CMSeeK"]="Tuhinshubhra/CMSeeK"
+	["fav-up"]="pielco11/fav-up"
+	["massdns"]="blechschmidt/massdns"
+	["Oralyzer"]="r0075h3ll/Oralyzer"
+	["testssl.sh"]="drwetter/testssl.sh"
+	["JSA"]="w9w/JSA"
+	["CloudHunter"]="belane/CloudHunter"
+	["ultimate-nmap-parser"]="shifty0g/ultimate-nmap-parser"
+	["pydictor"]="LandGrey/pydictor"
+	["gitdorks_go"]="damit5/gitdorks_go"
 	["smuggler"]="defparam/smuggler"
-	# ["Web-Cache-Vulnerability-Scanner"]="Hackmanit/Web-Cache-Vulnerability-Scanner"
-	# ["regulator"]="cramppet/regulator"
-	# ["gitleaks"]="gitleaks/gitleaks"
-	# ["trufflehog"]="trufflesecurity/trufflehog"
-	# ["nomore403"]="devploit/nomore403"
-	# ["SwaggerSpy"]="UndeadSec/SwaggerSpy"
-	# ["LeakSearch"]="JoelGMSec/LeakSearch"
+	["Web-Cache-Vulnerability-Scanner"]="Hackmanit/Web-Cache-Vulnerability-Scanner"
+	["regulator"]="cramppet/regulator"
+	["gitleaks"]="gitleaks/gitleaks"
+	["trufflehog"]="trufflesecurity/trufflehog"
+	["nomore403"]="devploit/nomore403"
+	["SwaggerSpy"]="UndeadSec/SwaggerSpy"
+	["LeakSearch"]="JoelGMSec/LeakSearch"
 	["ffufPostprocessing"]="Damian89/ffufPostprocessing"
-	# ["misconfig-mapper"]="intigriti/misconfig-mapper"
-	# ["Spoofy"]="MattKeeley/Spoofy"
-	# ["msftrecon"]="Arcanum-Sec/msftrecon"
-	# ["Scopify"]="Arcanum-Sec/Scopify"
-	# ["metagoofil"]="opsdisk/metagoofil"
-	# ["EmailHarvester"]="maldevel/EmailHarvester"
-	# ["reconftw_ai"]="six2dez/reconftw_ai"
+	["misconfig-mapper"]="intigriti/misconfig-mapper"
+	["Spoofy"]="MattKeeley/Spoofy"
+	["msftrecon"]="Arcanum-Sec/msftrecon"
+	["Scopify"]="Arcanum-Sec/Scopify"
+	["metagoofil"]="opsdisk/metagoofil"
+	["EmailHarvester"]="maldevel/EmailHarvester"
+	["reconftw_ai"]="six2dez/reconftw_ai"
 )
 
 # Download required files with error handling
@@ -164,6 +160,7 @@ declare -A downloads=(
 	["headers_inject"]="https://gist.github.com/six2dez/d62ab8f8ffd28e1c206d401081d977ae/raw ${tools}/headers_inject.txt"
 	["axiom_config"]="https://gist.githubusercontent.com/six2dez/6e2d9f4932fd38d84610eb851014b26e/raw ${tools}/axiom_config.sh"
 	["jsluice_patterns"]="https://gist.githubusercontent.com/six2dez/2aafa8dc2b682bb0081684e71900e747/raw ${tools}/jsluice_patterns.json"
+	["nuclei-templates"]="https://github.com/projectdiscovery/nuclei-templates/archive/refs/tags/v10.2.4.tar.gz ${NUCLEI_TEMPLATES_PATH}/nuclei-templates.tar.gz"
 )
 
 # Function to display the banner
@@ -433,6 +430,11 @@ function configuring_special_repositories() {
 		eval git -C "${NUCLEI_TEMPLATES_PATH}/extra_templates" pull $DEBUG_STD
 		eval git -C "${tools}/nuclei-templates" pull $DEBUG_STD
 	fi
+
+	if [[ ! -f "${NUCLEI_TEMPLATES_PATH}/nuclei-templates.tar.gz" ]]; then
+		tar -xzf "${NUCLEI_TEMPLATES_PATH}/nuclei-templates.tar.gz" -C "$NUCLEI_TEMPLATES_PATH"
+	fi
+
 	echo -e "${yellow}[+] Updating Nuclei templates...${reset}"
 	eval nuclei -update-templates update-template-dir "${NUCLEI_TEMPLATES_PATH}" $DEBUG_STD
 	
@@ -451,16 +453,16 @@ function configuring_special_repositories() {
 	fi
 
 	# massdns
-	# if [[ ! -d "${dir}/massdns" ]]; then
-	# 	#printf "${yellow}Cloning and compiling massdns...${reset}"
-	# 	eval git clone https://github.com/blechschmidt/massdns.git "${dir}/massdns" $DEBUG_STD
-	# 	eval make -C "${dir}/massdns" $DEBUG_STD
-	# 	eval strip -s "${dir}/massdns/bin/massdns" $DEBUG_ERROR
-	# 	eval $SUDO cp "${dir}/massdns/bin/massdns" /usr/local/bin/ $DEBUG_ERROR
-	# else
-	# 	#printf "${yellow}Updating massdns...${reset}"
-	# 	eval git -C "${dir}/massdns" pull $DEBUG_STD
-	# fi
+	if [[ ! -d "${dir}/massdns" ]]; then
+		#printf "${yellow}Cloning and compiling massdns...${reset}"
+		eval git clone https://github.com/blechschmidt/massdns.git "${dir}/massdns" $DEBUG_STD
+		eval make -C "${dir}/massdns" $DEBUG_STD
+		eval strip -s "${dir}/massdns/bin/massdns" $DEBUG_ERROR
+		eval $SUDO cp "${dir}/massdns/bin/massdns" /usr/local/bin/ $DEBUG_ERROR
+	else
+		#printf "${yellow}Updating massdns...${reset}"
+		eval git -C "${dir}/massdns" pull $DEBUG_STD
+	fi
 
 	# gf patterns
 	if [[ ! -d "$HOME/.gf" ]]; then
